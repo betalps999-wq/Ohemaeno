@@ -136,7 +136,7 @@
     50%      { box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 70px rgba(255,255,255,0.7); }
   }
 
-  /* --- ИСПРАВЛЕННЫЕ ФРАЗЫ (ПОЛЕТ ДО САМОГО ВЕРХА) --- */
+  /* --- ФРАЗЫ (СТРОГО ПО ЦЕНТРУ) --- */
   .phrase {
     position: fixed;
     z-index: 20;
@@ -146,7 +146,7 @@
     font-size: clamp(0.85rem, 3.8vw, 1.3rem); 
     line-height: 1.2;
     text-shadow: 0 3px 12px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.4);
-    white-space: nowrap;
+    white-space: nowrap; /* Строго в одну строку */
     padding: 8px 16px;
     border-radius: 30px;
     background: rgba(255,255,255,0.15);
@@ -154,33 +154,35 @@
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.3);
     
-    /* Задаем начальную позицию снизу в пикселях через JS */
+    /* Жестко ставим по центру экрана */
+    left: 50%;
     bottom: -100px; 
-    left: 0;
     
     will-change: transform, opacity;
     
+    /* Анимация */
     animation: floatUp var(--duration) cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
     animation-delay: var(--delay);
   }
 
-  /* Анимация полета снизу вверх */
+  /* Анимация полета: строго вверх, центр сохраняется через translateX(-50%) */
   @keyframes floatUp {
     0% {
       opacity: 0;
-      transform: translate(var(--startX), 0) scale(0.8);
+      /* Начинаем снизу. translateX(-50%) гарантирует идеальный центр */
+      transform: translateX(-50%) translateY(0) scale(0.8);
     }
     10% {
       opacity: 1; 
-      transform: translate(var(--startX), -80px) scale(1);
+      transform: translateX(-50%) translateY(-80px) scale(1);
     }
     85% {
-      opacity: 1; /* Держим видимость почти до самого верха */
+      opacity: 1; 
     }
     100% {
       opacity: 0;
-      /* Поднимаем на высоту экрана (задается в JS) + запас на исчезновение */
-      transform: translate(var(--startX), calc(-1 * var(--travelDist))) scale(1.1);
+      /* Поднимаем вверх на высоту экрана + запас */
+      transform: translateX(-50%) translateY(calc(-1 * var(--travelDist))) scale(1.1);
     }
   }
 
@@ -250,21 +252,13 @@
     el.className = 'phrase';
     el.textContent = phrases[Math.floor(Math.random() * phrases.length)];
 
-    const vw = window.innerWidth;
+    // Считаем высоту экрана для правильного полета до верха
     const vh = window.innerHeight;
-    
-    // 1. Горизонтальная позиция (по всей ширине, с отступами от краев)
-    const startXPercent = 15 + Math.random() * 70; // от 15% до 85%
-    const startX = (startXPercent / 100) * vw;
+    const travelDist = vh + 100; // Высота экрана + запас
 
-    // 2. Дистанция полета (почти до самого верха + запас)
-    // Берем высоту экрана и добавляем 100px, чтобы фраза улетела за край
-    const travelDist = vh + 100;
-
-    el.style.setProperty('--startX', startX + 'px');
     el.style.setProperty('--travelDist', travelDist + 'px');
     
-    // Время полета (от 4.5 до 7 секунд для плавности)
+    // Время полета (от 4.5 до 7 секунд)
     el.style.setProperty('--duration', (4.5 + Math.random() * 2.5) + 's');
     
     // Задержка перед стартом
@@ -288,8 +282,7 @@
     // Бесконечный поток
     setInterval(() => {
       spawnPhrase();
-      // Иногда выпускаем по 2 фразы для плотности
-      if (Math.random() > 0.6) {
+      if (Math.random() > 0.5) {
         setTimeout(spawnPhrase, 150);
       }
     }, 250);
