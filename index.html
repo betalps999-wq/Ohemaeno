@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Данила и Руслан</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #5c0d99;
+    position: fixed; 
+  }
+
+  body {
+    background: linear-gradient(135deg, #5c0d99 0%, #9b1b6e 50%, #c2185b 100%);
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* --- ФОНОВЫЕ ЭФФЕКТЫ --- */
+  .bg-aura {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .aura-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+    animation: floatBlob 20s infinite alternate ease-in-out;
+  }
+
+  .blob1 { width: 60vw; height: 60vw; background: #d81b60; top: -10%; left: -20%; animation-duration: 25s; }
+  .blob2 { width: 50vw; height: 50vw; background: #7b1fa2; bottom: -10%; right: -10%; animation-duration: 22s; animation-delay: -5s; }
+  .blob3 { width: 40vw; height: 40vw; background: #f06292; top: 40%; left: 50%; transform: translate(-50%, -50%); animation-duration: 18s; animation-delay: -10s; opacity: 0.25; }
+
+  @keyframes floatBlob {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(5vw, 5vh) scale(1.1); }
+    100% { transform: translate(-5vw, 10vh) scale(0.9); }
+  }
+
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: floatUpParticle linear infinite;
+  }
+
+  @keyframes floatUpParticle {
+    0%   { transform: translateY(110vh) scale(0.5); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(circle at center, transparent 40%, rgba(40, 0, 60, 0.5) 100%);
+  }
+
+  /* --- КОНТЕНТ --- */
+  .content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+    max-width: 95vw;
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: clamp(1.3rem, 5.5vw, 2.2rem);
+    line-height: 1.3;
+    font-weight: 700;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-bottom: 35px;
+    animation: fadeIn 1.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+    font-weight: 800;
+    color: #9b1b6e;
+    background: #ffffff;
+    border: none;
+    border-radius: 60px;
+    padding: 16px 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 40px rgba(255,255,255,0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    animation: pulse 1.8s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+    position: relative;
+    z-index: 11;
+  }
+
+  .btn:active {
+    transform: scale(0.92);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 40px rgba(255,255,255,0.3); }
+    50%      { box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 70px rgba(255,255,255,0.7); }
+  }
+
+  /* --- ИСПРАВЛЕННЫЕ ФРАЗЫ (ПОЛЕТ ДО САМОГО ВЕРХА) --- */
+  .phrase {
+    position: fixed;
+    z-index: 20;
+    pointer-events: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: clamp(0.85rem, 3.8vw, 1.3rem); 
+    line-height: 1.2;
+    text-shadow: 0 3px 12px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.4);
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    
+    /* Задаем начальную позицию снизу в пикселях через JS */
+    bottom: -100px; 
+    left: 0;
+    
+    will-change: transform, opacity;
+    
+    animation: floatUp var(--duration) cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+    animation-delay: var(--delay);
+  }
+
+  /* Анимация полета снизу вверх */
+  @keyframes floatUp {
+    0% {
+      opacity: 0;
+      transform: translate(var(--startX), 0) scale(0.8);
+    }
+    10% {
+      opacity: 1; 
+      transform: translate(var(--startX), -80px) scale(1);
+    }
+    85% {
+      opacity: 1; /* Держим видимость почти до самого верха */
+    }
+    100% {
+      opacity: 0;
+      /* Поднимаем на высоту экрана (задается в JS) + запас на исчезновение */
+      transform: translate(var(--startX), calc(-1 * var(--travelDist))) scale(1.1);
+    }
+  }
+
+  .burst {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent 60%);
+    animation: burstOut 1.2s ease-out forwards;
+  }
+
+  @keyframes burstOut {
+    from { opacity: 1; transform: scale(0.3); }
+    to   { opacity: 0; transform: scale(2.5); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg-aura">
+    <div class="aura-blob blob1"></div>
+    <div class="aura-blob blob2"></div>
+    <div class="aura-blob blob3"></div>
+  </div>
+  <div class="bg-particles" id="particlesContainer"></div>
+  <div class="vignette"></div>
+
+  <div class="content" id="mainContent">
+    <h1>Если я буду Даней, ты будешь моим Русланом</h1>
+    <button class="btn" id="goBtn">Да!</button>
+  </div>
+
+<script>
+  const phrases = [
+    "кашенцовы",
+    "данила а ты помнишь как с русланом сторис снимал",
+    "вы за ручки держались"
+  ];
+
+  const btn = document.getElementById('goBtn');
+  const content = document.getElementById('mainContent');
+  const particlesContainer = document.getElementById('particlesContainer');
+  
+  let isRunning = false;
+
+  function createParticles() {
+    const particleCount = 15;
+    for (let i = 0; i < particleCount; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 6 + 2;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + 'vw';
+      const duration = Math.random() * 15 + 10;
+      p.style.animationDuration = duration + 's';
+      p.style.animationDelay = '-' + (Math.random() * duration) + 's';
+      p.style.opacity = Math.random() * 0.3 + 0.2;
+      particlesContainer.appendChild(p);
+    }
+  }
+  createParticles();
+
+  function spawnPhrase() {
+    const el = document.createElement('div');
+    el.className = 'phrase';
+    el.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    
+    // 1. Горизонтальная позиция (по всей ширине, с отступами от краев)
+    const startXPercent = 15 + Math.random() * 70; // от 15% до 85%
+    const startX = (startXPercent / 100) * vw;
+
+    // 2. Дистанция полета (почти до самого верха + запас)
+    // Берем высоту экрана и добавляем 100px, чтобы фраза улетела за край
+    const travelDist = vh + 100;
+
+    el.style.setProperty('--startX', startX + 'px');
+    el.style.setProperty('--travelDist', travelDist + 'px');
+    
+    // Время полета (от 4.5 до 7 секунд для плавности)
+    el.style.setProperty('--duration', (4.5 + Math.random() * 2.5) + 's');
+    
+    // Задержка перед стартом
+    el.style.setProperty('--delay', (Math.random() * 0.6) + 's');
+
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+
+  function startShow() {
+    if (isRunning) return;
+    isRunning = true;
+    
+    content.style.display = 'none';
+
+    const burst = document.createElement('div');
+    burst.className = 'burst';
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 1300);
+
+    // Бесконечный поток
+    setInterval(() => {
+      spawnPhrase();
+      // Иногда выпускаем по 2 фразы для плотности
+      if (Math.random() > 0.6) {
+        setTimeout(spawnPhrase, 150);
+      }
+    }, 250);
+  }
+
+  btn.addEventListener('click', startShow);
+  btn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startShow();
+  }, { passive: false });
+</script>
+
+</body>
+</html>
